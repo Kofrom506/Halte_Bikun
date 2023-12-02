@@ -287,7 +287,7 @@ class HomePage extends StatelessWidget {
                       ElevatedButton(
                           style: ElevatedButton.styleFrom(
                             padding: EdgeInsets.all(0),
-                           // Set the background color
+                            // Set the background color
                             shape: CircleBorder(), // Make the button circular
                           ),
                           onPressed: () {

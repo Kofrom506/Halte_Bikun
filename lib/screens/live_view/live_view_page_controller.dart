@@ -8,7 +8,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class LiveViewPageController extends GetxController {
-  RxString imageUrl = 'http://desprokel10.ddns.net:1234/latestdetect'.obs;
+  var number = 0.obs;
+  // RxString imageUrl = "http://desprokel10.ddns.net:1234/latestdetect?a=${number.value}".obs;
   var isLoadingWeather = true.obs;
   var isLoadingLatest = true.obs;
 
@@ -26,9 +27,9 @@ class LiveViewPageController extends GetxController {
   var uriLatest = "http://desprokel10.ddns.net:1234/latest_json";
   var uriChartJson = "http://desprokel10.ddns.net:1234/chart_json";
 
-  void updateImageUrl() {
-    imageUrl.value = 'http://desprokel10.ddns.net:1234/latestpic';
-  }
+  // void updateImageUrl() {
+  //   imageUrl.value = 'http://desprokel10.ddns.net:1234/latestpic';
+  // }
 
   void onInit() {
     super.onInit();

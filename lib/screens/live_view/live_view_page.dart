@@ -32,19 +32,20 @@ class _LiveViewPageState extends State<LiveViewPage> {
 
   @override
   Widget build(BuildContext context) {
-    double screenHeight = MediaQuery.of(context).size.height;
-
+    double screenHeight = MediaQuery
+        .of(context)
+        .size
+        .height;
 
 
     Future<void> refresh() async {
-      await DefaultCacheManager().removeFile('http://desprokel10.ddns.net:1234/latestdetect');
-      liveViewPageController.imageUrl.value = 'http://desprokel10.ddns.net:1234/latestdetect';
-      print("Eva");
+
+      liveViewPageController.number.value += 1;
+      print("Refreshed");
     }
     Timer.periodic(Duration(minutes: 5), (Timer timer) {
       refresh();
-
-      print("Refreshed Image");
+      print("Refreshed In 5 minute");
     });
 
     return RefreshIndicator(
@@ -69,11 +70,12 @@ class _LiveViewPageState extends State<LiveViewPage> {
                               fontSize: 25,
                               fontWeight: FontWeight.bold)),
                       ElevatedButton(
-                        onPressed: ()=>refresh,
+                        onPressed: () => refresh,
                         style: ElevatedButton.styleFrom(
                           padding: EdgeInsets.zero,
                           shape: CircleBorder(),
-                          primary: Configs.primaryColor, // Set the background color
+                          primary: Configs
+                              .primaryColor, // Set the background color
                         ),
                         child: CircleAvatar(
                           child: Icon(FontAwesomeIcons.arrowsRotate),
@@ -86,7 +88,11 @@ class _LiveViewPageState extends State<LiveViewPage> {
                   SizedBox(
                     height: 15,
                   ),
-                  Image.network("http://desprokel10.ddns.net:1234/latestdetect"),
+                  // Obx(() {
+                  //   return Image.network(
+                  //       "http://desprokel10.ddns.net:1234/latestdetect?a=${liveViewPageController
+                  //           .number}");
+                  // }),
                   // FloatingActionButton(onPressed: refresh),
                   // NetworkImage(liveViewPageController.imageUrl.value),
                   Obx(() {
@@ -98,34 +104,33 @@ class _LiveViewPageState extends State<LiveViewPage> {
                         Image.network(
                           errorBuilder: (context, error, stackTrace) {
                             return
-                                Center(
-                                  child: Card(
-                                    child: Container(
-                                      width: double.infinity,
-                                      height: screenHeight * 0.2,
-                                      child: Column(
-                                        mainAxisAlignment: MainAxisAlignment.center,
-                                        children: [
-                                          Icon(
-                                            FontAwesomeIcons.exclamationTriangle, // Error icon
-                                            size: 50,
-                                            color: Colors.red, // Error icon color
-                                          ),
-                                          SizedBox(height: screenHeight*0.03,),
-                                          Text("Image Fail To Be Loaded !", style: TextStyle(
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.bold)),
-                                        ],
-                                      ),
+                              Center(
+                                child: Card(
+                                  child: Container(
+                                    width: double.infinity,
+                                    height: screenHeight * 0.2,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment
+                                          .center,
+                                      children: [
+                                        Icon(
+                                          FontAwesomeIcons.exclamationTriangle,
+                                          // Error icon
+                                          size: 50,
+                                          color: Colors.red, // Error icon color
+                                        ),
+                                        SizedBox(height: screenHeight * 0.03,),
+                                        Text("Image Fail To Be Loaded !",
+                                            style: TextStyle(
+                                                fontSize: 20.0,
+                                                fontWeight: FontWeight.bold)),
+                                      ],
                                     ),
                                   ),
-                                );
-
-
-
-
+                                ),
+                              );
                           },
-                          '${liveViewPageController.imageUrl.value}?${DateTime.now().millisecondsSinceEpoch.toString()}',
+                          "http://desprokel10.ddns.net:1234/latestdetect?data=${liveViewPageController.number}",
                           fit: BoxFit.cover,
                         ));
                   }),
@@ -138,7 +143,9 @@ class _LiveViewPageState extends State<LiveViewPage> {
                               fontSize: 20,
                               fontWeight: FontWeight.bold)),
                       Spacer(),
-                      ElevatedButton(onPressed: refresh,child: Icon(FontAwesomeIcons.circleInfo,color: Configs.primaryColor,))
+                      ElevatedButton(onPressed: refresh,
+                          child: Icon(FontAwesomeIcons.circleInfo,
+                            color: Configs.primaryColor,))
                       // Text("View All",
                       //     style: TextStyle(
                       //       color: Colors.grey,

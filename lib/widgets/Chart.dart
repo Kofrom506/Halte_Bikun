@@ -12,7 +12,7 @@ class TerminalChart extends StatelessWidget {
         "2023-09-08T14:20:00Z",
         "2023-09-08T14:25:00Z"
       ],
-      "count": [6, 5, 2, 4, 3]
+      "count": [6, 5, 2, 4, 1]
     },
   };
 
