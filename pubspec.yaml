@@ -76,6 +76,8 @@ flutter:
     - assets/dte.png
     - assets/latest.json
     - assets/json/chart.json
+    - assets/json/
+    - assets/
 
   # assets:
   #   - images/a_dot_burr.jpeg

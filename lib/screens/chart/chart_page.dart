@@ -1,11 +1,17 @@
 // import 'package:fl_chart_app/presentation/resources/app_resources.dart';
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_halte/configs/configs.dart';
 import 'package:flutter_halte/models/HistoryData.dart';
+import 'package:flutter_halte/screens/chart/chart_page_controller.dart';
 import 'package:flutter_halte/widgets/Chart.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get_core/src/get_main.dart';
+import 'package:get/get_instance/get_instance.dart';
+import 'package:get/get_state_manager/src/rx_flutter/rx_obx_widget.dart';
 
 class ChartPage extends StatefulWidget {
   const ChartPage({super.key});
@@ -17,55 +23,28 @@ class ChartPage extends StatefulWidget {
 class _ChartPageState extends State<ChartPage> {
   List<Color> gradientColors = [
     Configs.primaryColor,
-    Configs.secondaryColor,
+    Configs.tertiaryColor,
   ];
   late HistoryData chartData;
   late int max;
   late int min;
 
   bool showAvg = false;
+  final ChartPageController chartPageController =
+  Get.put(ChartPageController());
 
   @override
+  void onInit() async {
+    await chartPageController.fetchDataLatest();
+
+    String jsonData = jsonEncode(chartPageController.history?.oneHour);
+    chartData = HistoryData.fromJson(chartPageController.historyData1hour);
+
+
+    print(chartPageController.historyData1hour);
+  }
+
   void initState() {
-    String jsonData = '''
-    {
-      "1hrs": {
-        "length": "12",
-        "time": [
-          "2023-11-13 02:44:43",
-          "2023-11-13 02:49:44",
-          "2023-11-13 02:54:44",
-          "2023-11-13 02:59:45",
-          "2023-11-13 03:04:46",
-          "2023-11-13 03:09:47",
-          "2023-11-13 03:14:47",
-          "2023-11-13 03:19:48",
-          "2023-11-13 03:24:48",
-          "2023-11-13 03:29:49",
-          "2023-11-13 03:34:50",
-          "2023-11-13 03:39:50"
-        ],
-        "count": [
-          "1",
-          "2",
-          "9",
-          "0",
-          "13",
-          "17",
-          "4",
-          "10",
-          "0",
-          "14",
-          "22",
-          "12"
-        ]
-      }
-    }
-    ''';
-
-    Map<String, dynamic> jsonMap = jsonDecode(jsonData);
-    chartData = HistoryData.fromJson(jsonMap['1hrs']);
-
     max = 22;
     min = 0;
 
@@ -74,6 +53,15 @@ class _ChartPageState extends State<ChartPage> {
 
   @override
   Widget build(BuildContext context) {
+    Future<void> refresh() async {
+      chartPageController.fetchDataLatest();
+      print("Refreshed");
+    }
+
+    Timer.periodic(Duration(minutes: 5), (Timer timer) {
+      refresh();
+      print("Refreshed In 5 minute");
+    });
 
 
     // return SafeArea(
@@ -112,214 +100,207 @@ class _ChartPageState extends State<ChartPage> {
     // );
 
     return SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: 20.0,
-            vertical: 10.0,
-          ),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text("Greenhouse A",
-                    style: TextStyle(
-                        color: Colors.black,
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold)),
-                SizedBox(height: 15,),
-                // BarChart(
-                //   BarChartData(
-                //     alignment: BarChartAlignment.spaceAround,
-                //     maxY: 10,
-                //     barGroups: [
-                //       BarChartGroupData(
-                //         x: 0,
-                //         barRods: [
-                //           BarChartRodData(
-                //
-                //             color: Colors.blue, toY: 5,
-                //           ),
-                //         ],
-                //       ),
-                //       BarChartGroupData(
-                //         x: 1,
-                //         barRods: [
-                //           BarChartRodData(
-                //             color: Colors.green, toY: 5,
-                //           ),
-                //         ],
-                //       ),
-                //       BarChartGroupData(
-                //         x: 2,
-                //         barRods: [
-                //           BarChartRodData(
-                //             color: Colors.red, toY: 3,
-                //           ),
-                //         ],
-                //       ),
-                //     ],
-                //   ),
-                // ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(
+          horizontal: 20.0,
+          vertical: 10.0,
+        ),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // FloatingActionButton(onPressed: ()=>{
+              //   print(chartPageController.historyData1hour)
+              // }),
 
-                SizedBox(height: 15,),
-                Text("Grafik pH",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,)),
-                Stack(
-                  children: <Widget>[
-                    AspectRatio(
-                      aspectRatio: 1.70,
-                      child: LineChart(
-                        showAvg ? avgData() : mainData(chartData),
+
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+
+                  Text("Chart View",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold)),
+                  ElevatedButton(onPressed: refresh,
+                      child: Icon(FontAwesomeIcons.arrowsRotate,
+                        color: Configs.primaryColor,))
+                ],
+              ),
+              SizedBox(height: 15,),
+              // BarChart(
+              //   BarChartData(
+              //     alignment: BarChartAlignment.spaceAround,
+              //     maxY: 10,
+              //     barGroups: [
+              //       BarChartGroupData(
+              //         x: 0,
+              //         barRods: [
+              //           BarChartRodData(
+              //
+              //             color: Colors.blue, toY: 5,
+              //           ),
+              //         ],
+              //       ),
+              //       BarChartGroupData(
+              //         x: 1,
+              //         barRods: [
+              //           BarChartRodData(
+              //             color: Colors.green, toY: 5,
+              //           ),
+              //         ],
+              //       ),
+              //       BarChartGroupData(
+              //         x: 2,
+              //         barRods: [
+              //           BarChartRodData(
+              //             color: Colors.red, toY: 3,
+              //           ),
+              //         ],
+              //       ),
+              //     ],
+              //   ),
+              // ),
+
+
+              Text("Grafik Keramaian: 7 Hari Terakhir",
+
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,)),
+              SizedBox(height: 15,),
+              Obx(() {
+                if (!chartPageController.isLoadingLatest.value) {
+                  return Stack(
+                    children: <Widget>[
+                      AspectRatio(
+                        aspectRatio: 1.70,
+                        child: LineChart(
+                          showAvg ? avgData() : mainData(HistoryData.fromJson(chartPageController.historyData1hour)),
+                        ),
                       ),
-                    ),
-                    SizedBox(
-                      width: 60,
-                      height: 34,
-                      child: TextButton(
-                        onPressed: () {
-                          setState(() {
-                            showAvg = !showAvg;
-                          });
-                        },
-                        child: Text(
-                          'avg',
-                          style: TextStyle(
-                            fontSize: 12,
-                            color:
-                            showAvg ? Colors.white.withOpacity(0.5) : Colors.white,
+                     SizedBox(
+                        width: 60,
+                        height: 34,
+                        child: TextButton(
+                          onPressed: () {
+                            setState(() {
+                              showAvg = !showAvg;
+                            });
+                          },
+                          child: Text(
+                            'avg',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color:
+                              showAvg ? Colors.white.withOpacity(0.5) : Colors
+                                  .white,
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                    ],
+                  );
+                }
+                else {
+                  return Center(child: CircularProgressIndicator());
+                }
+              }),
+              SizedBox(height: 15,),
+
+              Center(
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    InkWell(onTap: () => print("aa"),
+                        child: Chip(label: Text("1 Hour"),)),
+                    InkWell(onTap: () => print("aa"),
+                        child: Chip(label: Text("3 Hour"),)),
+                    InkWell(onTap: () => print("aa"),
+                        child: Chip(label: Text("6 Hour"),)),
+                    InkWell(onTap: () => print("aa"),
+                        child: Chip(label: Text("12 Hour"),)),
+
+                    // ElevatedButton(onPressed: refresh,
+                    //     child: Text("1 Hrs",style: TextStyle(
+                    //       color: Configs.primaryColor,
+                    //       fontSize: 16,
+                    //       fontWeight: FontWeight.bold,
+                    //     ),),
+                    //       ),
+                    //
+                    //
+                    // ElevatedButton(onPressed: refresh,
+                    //   child: Text("3 Hrs",style: TextStyle(
+                    //     color: Configs.primaryColor,
+                    //     fontSize: 16,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),),
+                    // ),
+                    //
+                    // ElevatedButton(onPressed: refresh,
+                    //   child: Text("6 Hrs",style: TextStyle(
+                    //     color: Configs.primaryColor,
+                    //     fontSize: 16,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),),
+                    // ),
+                    // ElevatedButton(onPressed: refresh,
+                    //   child: Text("12 Hrs",style: TextStyle(
+                    //     color: Configs.primaryColor,
+                    //     fontSize: 16,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),),
+                    // ),
                   ],
                 ),
-                SizedBox(height: 15,),
-                Text("Grafik Water Temperature",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,)),
-                // Stack(
-                //   children: <Widget>[
-                //     AspectRatio(
-                //       aspectRatio: 1.70,
-                //       child: LineChart(
-                //         showAvg ? avgData() : mainData(),
-                //       ),
-                //     ),
-                //     SizedBox(
-                //       width: 60,
-                //       height: 34,
-                //       child: TextButton(
-                //         onPressed: () {
-                //           setState(() {
-                //             showAvg = !showAvg;
-                //           });
-                //         },
-                //         child: Text(
-                //           'avg',
-                //           style: TextStyle(
-                //             fontSize: 12,
-                //             color:
-                //             showAvg ? Colors.white.withOpacity(0.5) : Colors.white,
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                SizedBox(height: 15,),
-                Text("Grafik EC",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,)),
-                // Stack(
-                //   children: <Widget>[
-                //     AspectRatio(
-                //       aspectRatio: 1.70,
-                //       child: LineChart(
-                //         showAvg ? avgData() : mainData(),
-                //       ),
-                //     ),
-                //     SizedBox(
-                //       width: 60,
-                //       height: 34,
-                //       child: TextButton(
-                //         onPressed: () {
-                //           setState(() {
-                //             showAvg = !showAvg;
-                //           });
-                //         },
-                //         child: Text(
-                //           'avg',
-                //           style: TextStyle(
-                //             fontSize: 12,
-                //             color:
-                //             showAvg ? Colors.white.withOpacity(0.5) : Colors.white,
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                SizedBox(height: 15,),
-                Text("Grafik Water Level",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,)),
-                // Stack(
-                //   children: <Widget>[
-                //     AspectRatio(
-                //       aspectRatio: 1.70,
-                //       child: LineChart(
-                //         showAvg ? avgData() : mainData(),
-                //       ),
-                //     ),
-                //     SizedBox(
-                //       width: 60,
-                //       height: 34,
-                //       child: TextButton(
-                //         onPressed: () {
-                //           setState(() {
-                //             showAvg = !showAvg;
-                //           });
-                //         },
-                //         child: Text(
-                //           'avg',
-                //           style: TextStyle(
-                //             fontSize: 12,
-                //             color:
-                //             showAvg ? Colors.white.withOpacity(0.5) : Colors.white,
-                //           ),
-                //         ),
-                //       ),
-                //     ),
-                //   ],
-                // ),
-                // LineChart(LineChartData(
-                //     minX: 0,
-                //     maxX: 11,
-                //     minY: 0,
-                //     maxY: 6,
-                //     lineBarsData: [
-                //       LineChartBarData(
-                //           spots: [
-                //             FlSpot(0, 3),
-                //             FlSpot(0, 5),
-                //             FlSpot(0, 5),
-                //
-                //           ]
-                //       )
-                //     ]
-                //
-                // )
+              ),
+              SizedBox(
+                height: 20,
+              ),
+              Center(
+                child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    InkWell(onTap: (
 
-              ],
-            ),
+                        ) => print("aa"),
+                        child: Chip(label: Text("1 Day"),)),
+                    InkWell(onTap: () => print("aa"),
+                        child: Chip(label: Text("3 Day"),)),
+                    InkWell(onTap: () => print("aa"),
+                        child: Chip(label: Text("7 Day"),)),
+                    //
+                    // ElevatedButton(onPressed: refresh,
+                    //   child: Text("1 Day",style: TextStyle(
+                    //     color: Configs.primaryColor,
+                    //     fontSize: 16,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),),
+                    // ),
+                    // ElevatedButton(onPressed: refresh,
+                    //   child: Text("3 Day",style: TextStyle(
+                    //     color: Configs.primaryColor,
+                    //     fontSize: 16,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),),
+                    // ),
+                    // ElevatedButton(onPressed: refresh,
+                    //   child: Text("7 Day",style: TextStyle(
+                    //     color: Configs.primaryColor,
+                    //     fontSize: 16,
+                    //     fontWeight: FontWeight.bold,
+                    //   ),),
+                    // ),
+                  ],
+                ),
+              ),
+
+            ],
           ),
         ),
+      ),
     );
   }
 
@@ -329,16 +310,16 @@ class _ChartPageState extends State<ChartPage> {
       fontSize: 16,
     );
     Widget text;
+
+    var data = HistoryData.fromJson(chartPageController.historyData1hour);
+
     switch (value.toInt()) {
-      case 2:
-        text = const Text('MAR', style: style);
+      case 0:
+        text = const Text('0 Menit', style: style);
         break;
-      case 5:
-        text = const Text('JUN', style: style);
-        break;
-      case 8:
-        text = const Text('SEP', style: style);
-        break;
+      // case 28:
+      //   text = const Text('12 Jam', style: style);
+      //   break;
       default:
         text = const Text('', style: style);
         break;
@@ -361,8 +342,11 @@ class _ChartPageState extends State<ChartPage> {
       case 0:
         text = min.toString();
         break;
-      case 25:
-        text = "25";
+      case 10:
+        text = "10";
+        break;
+      case 20:
+        text = "20";
         break;
       default:
         return Container();
@@ -372,7 +356,6 @@ class _ChartPageState extends State<ChartPage> {
   }
 
   LineChartData mainData(HistoryData chartData) {
-
     return LineChartData(
       gridData: FlGridData(
         show: true,
@@ -422,18 +405,18 @@ class _ChartPageState extends State<ChartPage> {
         border: Border.all(color: const Color(0xff37434d)),
       ),
       minX: 0,
-      maxX: chartData.time.length.toDouble() - 1,
+      maxX: chartData.count.length.toDouble() - 1,
       minY: 0,
-      maxY: 25,
+      maxY: 20,
       lineBarsData: [
         LineChartBarData(
 
-                          spots: List.generate(
-                            chartData.time.length,
-                                (index) =>
-                                FlSpot(index.toDouble(),
-                                    double.tryParse(chartData.count[index])!),
-                          ),
+          spots: List.generate(
+            chartData.time.length,
+                (index) =>
+                FlSpot(index.toDouble(),
+                    double.tryParse(chartData.count[index])!),
+          ),
           isCurved: true,
           gradient: LinearGradient(
             colors: gradientColors,
@@ -447,7 +430,7 @@ class _ChartPageState extends State<ChartPage> {
             show: true,
             gradient: LinearGradient(
               colors: gradientColors
-                  .map((color) => color.withOpacity(0.3))
+                  .map((color) => color.withOpacity(0.8))
                   .toList(),
             ),
           ),
@@ -550,6 +533,57 @@ class _ChartPageState extends State<ChartPage> {
           ),
         ),
       ],
+    );
+  }
+}
+
+
+class CapsuleButton extends StatelessWidget {
+  final String buttonText;
+  final VoidCallback onPressed;
+
+  CapsuleButton({required this.buttonText, required this.onPressed});
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      onTap: onPressed,
+      child: Container(
+        height: 50,
+        width: 75,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(25),
+          color: Configs.primaryColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey,
+              offset: Offset(4.0, 4.0),
+              blurRadius: 6.0,
+              spreadRadius: 2.0,
+            ),
+            BoxShadow(
+              color: Colors.white,
+              offset: Offset(-4.0, -4.0),
+              blurRadius: 6.0,
+              spreadRadius: 2.0,
+            ),
+          ], // Change the color as needed
+        ),
+        child: Stack(
+          alignment: Alignment.center,
+          children: [
+            // Button Text Overlay
+            Text(
+              buttonText,
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

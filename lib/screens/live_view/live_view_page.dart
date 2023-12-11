@@ -11,6 +11,8 @@ import 'package:get/get.dart';
 
 import '../../configs/configs.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'dart:math' as math;
+import '../../widgets/customs/TimerOnly.dart';
 
 class LiveViewPage extends StatefulWidget {
   @override
@@ -23,12 +25,31 @@ class _LiveViewPageState extends State<LiveViewPage> {
   Get.put(LiveViewPageController());
 
   void onInit() {
-    liveViewPageController.fetchDataWeather();
+    liveViewPageController.fetchDataLatest();
     // liveViewPageController.imageUrl.value =
     // 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/International_Pok%C3%A9mon_logo.svg/1200px-International_Pok%C3%A9mon_logo.svg.png';
     // print(liveViewPageController.imageUrl.value);
     // print(Get.find<HomePageController>().parseHistoryFromJson(jsonStr))
   }
+
+  Future<void> refresh() async {
+    liveViewPageController.fetchDataLatest();
+    print(liveViewPageController.dataNow.personCount);
+    liveViewPageController.number.value += 1;
+    print("Refreshed");
+  }
+
+
+  @override
+  void initState() {
+    Timer.periodic(Duration(minutes: 5), (Timer timer) {
+      refresh();
+      print("Refreshed In 5 minute");
+    });
+
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -38,15 +59,6 @@ class _LiveViewPageState extends State<LiveViewPage> {
         .height;
 
 
-    Future<void> refresh() async {
-
-      liveViewPageController.number.value += 1;
-      print("Refreshed");
-    }
-    Timer.periodic(Duration(minutes: 5), (Timer timer) {
-      refresh();
-      print("Refreshed In 5 minute");
-    });
 
     return RefreshIndicator(
       onRefresh: refresh,
@@ -69,20 +81,9 @@ class _LiveViewPageState extends State<LiveViewPage> {
                               color: Colors.black,
                               fontSize: 25,
                               fontWeight: FontWeight.bold)),
-                      ElevatedButton(
-                        onPressed: () => refresh,
-                        style: ElevatedButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          shape: CircleBorder(),
-                          primary: Configs
-                              .primaryColor, // Set the background color
-                        ),
-                        child: CircleAvatar(
-                          child: Icon(FontAwesomeIcons.arrowsRotate),
-                          foregroundColor: Colors.white,
-                          backgroundColor: Configs.primaryColor,
-                        ),
-                      )
+                      ElevatedButton(onPressed: refresh,
+                          child: Icon(FontAwesomeIcons.arrowsRotate,
+                            color: Configs.primaryColor,))
                     ],
                   ),
                   SizedBox(
@@ -161,12 +162,14 @@ class _LiveViewPageState extends State<LiveViewPage> {
                           child: Container(
                             height: 200,
                             child: Padding(
-                              padding: const EdgeInsets.all(8.0),
+                              padding: const EdgeInsets.all(16.0),
                               child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Row(
                                     crossAxisAlignment:
-                                    CrossAxisAlignment.start,
+                                    CrossAxisAlignment.center,
+
                                     children: [
                                       Icon(FontAwesomeIcons.peopleGroup,
                                           color: Configs.primaryColor),
@@ -177,7 +180,7 @@ class _LiveViewPageState extends State<LiveViewPage> {
                                         'Person',
                                         style: TextStyle(
                                             fontSize: 15.0,
-                                            fontWeight: FontWeight.bold),
+                                            fontWeight: FontWeight.bold,),
                                       )
                                     ],
                                   ),
@@ -185,8 +188,7 @@ class _LiveViewPageState extends State<LiveViewPage> {
                                     if (!liveViewPageController
                                         .isLoadingLatest.value) {
                                       return Text(
-                                          "${liveViewPageController.dataNow
-                                              .personCount}",
+                                          "${liveViewPageController.dataNow.personCount}",
                                           style: TextStyle(
                                               fontSize: 100.0,
                                               fontWeight: FontWeight.bold));
@@ -215,125 +217,79 @@ class _LiveViewPageState extends State<LiveViewPage> {
                                   child: Container(
                                     height: 200,
                                     child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                                      padding: const EdgeInsets.all(16.0),
                                       child: Column(
                                         children: [
                                           Row(
                                             crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                             children: [
-                                              Icon(FontAwesomeIcons.bus,
+                                              Icon(FontAwesomeIcons.peopleGroup,
                                                   color: Configs.primaryColor),
                                               SizedBox(
                                                 width: 10,
                                               ),
                                               Text(
-                                                'Arrival',
+                                                'Condition',
                                                 style: TextStyle(
                                                     fontSize: 15.0,
-                                                    fontWeight:
-                                                    FontWeight.bold),
+                                                    fontWeight: FontWeight.bold),
                                               )
                                             ],
                                           ),
-                                          Spacer(),
-                                          Row(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                            children: [
-                                              Text(
-                                                'Minute',
-                                                style: TextStyle(
-                                                    fontSize: 15.0,
-                                                    color: Colors.grey),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Expanded(
-                                child: Card(
-                                  elevation: 4.0,
-                                  child: Container(
-                                    height: 200,
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Column(
-                                        children: [
-                                          Row(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                            children: [
-                                              Icon(FontAwesomeIcons.sun,
-                                                  color: Configs.primaryColor),
-                                              SizedBox(
-                                                width: 10,
-                                              ),
-                                              Text(
-                                                'Weather',
-                                                style: TextStyle(
-                                                    fontSize: 15.0,
-                                                    fontWeight:
-                                                    FontWeight.bold),
-                                              )
-                                            ],
-                                          ),
-                                          Spacer(),
-                                          Row(
-                                            crossAxisAlignment:
-                                            CrossAxisAlignment.end,
-                                            children: [
-                                              Obx(() {
-                                                if (!liveViewPageController
-                                                    .isLoadingWeather.value) {
-                                                  return Text(
-                                                    '${liveViewPageController
-                                                        .weatherData?.temp
-                                                        ?.toInt()}°',
-                                                    style: TextStyle(
-                                                        fontSize: 30.0,
-                                                        fontWeight:
-                                                        FontWeight.bold),
-                                                  );
+
+                                          Obx(() {
+                                            if (!liveViewPageController
+                                                .isLoadingLatest.value) {
+                                              String getSizeDescription(int num) {
+                                                if (num > 5) {
+                                                  return 'Ramai';
                                                 } else {
-                                                  return Padding(
-                                                    padding:
-                                                    const EdgeInsets.all(
-                                                        8.0),
-                                                    child:
-                                                    CircularProgressIndicator(
-                                                        color: Configs
-                                                            .primaryColor),
-                                                  );
+                                                  return 'Sepi';
                                                 }
-                                              }),
-                                              Text(
-                                                'Celsius',
-                                                style: TextStyle(
-                                                    fontSize: 15.0,
-                                                    color: Colors.grey),
-                                              ),
-                                            ],
-                                          ),
+                                              }
+                                              return Column(
+                                                children: [
+                                                  SizedBox(height: 10),
+                                                  if (liveViewPageController.dataNow.personCount <= 5)
+                                                    Image.asset("assets/sepi.jpg"),
+                                                  if (liveViewPageController.dataNow.personCount > 5)
+                                                    Image.asset("assets/ramai.png"),
+                                                  SizedBox(height: 10),
+                                                  Text(
+                                                      getSizeDescription(liveViewPageController.dataNow.personCount),
+                                                      style: TextStyle(
+                                                          fontSize: 20.0,
+                                                          fontWeight: FontWeight.w500
+                                                      )),
+                                                ],
+                                              );
+                                            } else {
+                                              return Text('Loading...',
+                                                  style: TextStyle(
+                                                      fontSize: 20.0,
+                                                      fontWeight: FontWeight.bold));
+                                            }
+                                          }),
                                         ],
                                       ),
                                     ),
                                   ),
                                 ),
                               ),
+
                             ],
                           ),
                         ),
                       ),
+
+
                     ],
                   ),
-
+                  // SpeedometerWidget(value: 1),
                   // Image.network("http://desprokel10.ddns.net:1234/latestpic"),
                 ],
+
               ),
             )
 
@@ -350,5 +306,69 @@ class _LiveViewPageState extends State<LiveViewPage> {
         ),
       ),
     );
+  }
+}
+
+class SpeedometerWidget extends StatelessWidget {
+  final int value;
+
+  SpeedometerWidget({required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 150.0,
+      height: 150.0,
+      child: CustomPaint(
+        painter: SpeedometerPainter(value: value),
+      ),
+    );
+  }
+}
+
+class SpeedometerPainter extends CustomPainter {
+  final int value;
+
+  SpeedometerPainter({required this.value});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Paint fillPaint = Paint()
+      ..color = Colors.red
+      ..strokeCap = StrokeCap.round
+      ..style = PaintingStyle.fill;
+
+    final Paint outlinePaint = Paint()
+      ..color = Colors.black
+      ..strokeWidth = 2.0
+      ..style = PaintingStyle.stroke;
+
+    final double centerX = size.width / 2;
+    final double centerY = size.height / 2;
+    final double radius = size.width / 2 - 5.0;
+
+    // Draw the outline
+    canvas.drawCircle(Offset(centerX, centerY), radius, outlinePaint);
+
+    // Calculate the sweep angle based on the value
+    final double sweepAngle = math.min(1.0, value / 10.0) * 180.0;
+
+    // Draw the filled arc
+    canvas.drawArc(
+      Rect.fromCircle(center: Offset(centerX, centerY), radius: radius),
+      math.pi,
+      _degreesToRadians(sweepAngle),
+      true,
+      fillPaint,
+    );
+  }
+
+  double _degreesToRadians(double degrees) {
+    return degrees * math.pi / 180.0;
+  }
+
+  @override
+  bool shouldRepaint(CustomPainter oldDelegate) {
+    return false;
   }
 }

@@ -151,14 +151,18 @@ class HomePageController extends GetxController {
   Future<void> fetchDataLatest() async {
     try {
       isLoadingLatest(true);
-      final response = await http.get(Uri.parse(uri));
+      final response = await http.get(Uri.parse(uriLatest));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        int personCount = data['personCount'];
+        int personCount = int.tryParse(data['personCount']) ?? 0;
         String dateTime = data['time'];
         DateTime parsedTime = DateTime.parse(dateTime);
+        print(data);
+        print(dateTime);
         dataNow = DataNow(dateTime: parsedTime, personCount: personCount);
+        print(dataNow.personCount);
+
       }
 
     }catch(e){

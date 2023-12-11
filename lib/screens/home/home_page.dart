@@ -8,6 +8,7 @@ import 'package:flutter_halte/widgets/Timer.dart';
 import 'package:flutter_halte/widgets/customs/TimerOnly.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
+import 'dart:async';
 
 class HomePage extends StatelessWidget {
   final HomePageController homePageController = Get.put(HomePageController());
@@ -24,11 +25,21 @@ class HomePage extends StatelessWidget {
   Future<void> _refresh() async {
     homePageController.fetchDataLatest();
     homePageController.fetchDataWeather();
+    print(homePageController.dataNow.personCount);
   }
-
+  // Timer.periodic(Duration(minutes: 5), (Timer timer) {
+  // refresh();
+  //
+  // print("Refreshed In 5 minute");
+  // });
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    Timer.periodic(Duration(minutes: 5), (Timer timer) {
+      _refresh();
+
+      print("Refreshed In 5 minute");
+    });
     return RefreshIndicator(
       color: Configs.primaryColor,
       onRefresh: _refresh,
@@ -54,6 +65,10 @@ class HomePage extends StatelessWidget {
                                 fontWeight: FontWeight.bold)),
                         Text("Halte Teknik UI Overview.",
                             style: TextStyle(color: Colors.grey, fontSize: 15)),
+
+                        // FloatingActionButton(onPressed: ()=>{
+                        //   print(homePageController.dataNow.personCount)
+                        // })
                         // FloatingActionButton(
                         //     onPressed: () => {
                         //           homePageController.fetchPokemon(),

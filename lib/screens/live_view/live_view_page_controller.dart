@@ -33,89 +33,26 @@ class LiveViewPageController extends GetxController {
 
   void onInit() {
     super.onInit();
-    fetchDataWeather();
     fetchDataLatest();
   }
 
-  Future<void> fetchDataWeather() async {
-    try {
-      isLoadingWeather(true);
-      final response = await http.get(Uri.parse(uri));
 
-      if (response.statusCode == 200) {
-        final data = json.decode(response.body);
-
-        String icon = data['weather'][0]['icon'];
-        double lon = data['coord']['lon'];
-        double lat = data['coord']['lat'];
-        String mainWeather = data['weather'][0]['main'];
-        String weatherDescription = data['weather'][0]['description'];
-        double temp = data['main']['temp'];
-        weatherData = Weather(temp: temp,iconName: icon, iconColor: Colors.white, lat: lat, lon: lon, weatherDescription: weatherDescription, weatherName: mainWeather);
-        print(weatherData);
-
-        switch (data.iconName) {
-          case '01d':
-            weatherData.iconColor =  Colors.blue;
-            break;// Clear sky during the day
-          case '02d':
-            weatherData.iconColor =  Colors.blue;
-            break;
-          case '03d':
-            weatherData.iconColor =  Colors.grey;
-            break;
-          case '04d':
-            weatherData.iconColor =  Colors.grey;
-            break;
-          case '09d':
-            weatherData.iconColor =  Colors.green;
-            break;
-          case '10d':
-            weatherData.iconColor =  Colors.green;
-            break;
-          case '11d':
-            weatherData.iconColor =  Colors.indigo;
-            break;
-          case '13d':
-            weatherData.iconColor =  Colors.lightBlue;
-            break;
-          case '50d':
-            weatherData.iconColor =  Colors.grey;
-            break;
-          default:
-            weatherData.iconColor =  Configs.primaryColor;
-        }
-
-        // final results = data['results'] as List<dynamic>;
-        //
-        // for (var result in results) {
-        //   print(result);
-        //   final pokemonData = await fetchPokemonData(result['url']);
-        //   pokemonList.add(pokemonData);
-        // }
-        //
-        // offset += results.length;
-      }
-
-    }catch(e){
-      print(e);
-    }
-    finally {
-      isLoadingWeather(false);
-    }
-  }
 
   Future<void> fetchDataLatest() async {
     try {
       isLoadingLatest(true);
-      final response = await http.get(Uri.parse(uri));
+      final response = await http.get(Uri.parse(uriLatest));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        int personCount = data['personCount'];
+        int personCount = int.tryParse(data['personCount']) ?? 0;
         String dateTime = data['time'];
         DateTime parsedTime = DateTime.parse(dateTime);
+        print(data);
+        print(dateTime);
         dataNow = DataNow(dateTime: parsedTime, personCount: personCount);
+        print(dataNow.personCount);
+
       }
 
     }catch(e){

@@ -24,7 +24,7 @@ class _TimerWidgetState extends State<TimerWidget> {
 
   void _updateTimer(Timer timer) {
     setState(() {
-      if (_secondsRemaining > 0) {
+      if (_secondsRemaining < 0) {
         _secondsRemaining--;
       } else {
         // Timer has reached 0, you can handle what happens when the timer is done.
