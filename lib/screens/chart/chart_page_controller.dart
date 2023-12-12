@@ -26,6 +26,9 @@ class ChartPageController extends GetxController {
   dynamic  historyData7day = "";
   int length = 0;
 
+  String typeData = "1hrs";
+
+
   void onInit() {
     print("Call API Chart");
     super.onInit();
@@ -35,7 +38,7 @@ class ChartPageController extends GetxController {
 
   final String uriChartJson = "http://desprokel10.ddns.net:1234/chart_json";
 
-  Future<void> fetchDataLatest(int ) async {
+  Future<void> fetchDataLatest() async {
     try {
       isLoadingLatest(true);
       final response = await http.get(Uri.parse(uriChartJson));
@@ -51,6 +54,8 @@ class ChartPageController extends GetxController {
         historyData1day = data['history']['1day'];
         historyData3day = data['history']['3day'];
         historyData7day = data['history']['7day'];
+
+
 
 
         // HistoryData oneHour = HistoryData.fromJson(jsonDecode(data['history']['1hrs']));

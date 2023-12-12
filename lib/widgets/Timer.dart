@@ -11,8 +11,8 @@ class TimerWidget extends StatefulWidget {
 class _TimerWidgetState extends State<TimerWidget> {
   late Timer _timer;
   // TextStyle? style;
-  int _secondsRemaining = 5 * 60; // 5 minutes in seconds
-
+  int _secondsRemaining = 0;
+  int reloadTime = 5 * 60; // 5 minutes in seconds
 
 
   @override
@@ -24,12 +24,10 @@ class _TimerWidgetState extends State<TimerWidget> {
 
   void _updateTimer(Timer timer) {
     setState(() {
-      if (_secondsRemaining < 0) {
-        _secondsRemaining--;
+      if (_secondsRemaining < reloadTime) {
+        _secondsRemaining++;
       } else {
-        // Timer has reached 0, you can handle what happens when the timer is done.
         _timer.cancel(); // Stop the timer
-        // Add any additional logic here
       }
     });
   }
@@ -61,6 +59,6 @@ class _TimerWidgetState extends State<TimerWidget> {
   void dispose() {
     // Cancel the timer when the widget is disposed
     super.dispose();
-    // _timer.cancel();
+    _timer.cancel();
   }
 }

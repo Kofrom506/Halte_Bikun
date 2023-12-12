@@ -12,7 +12,14 @@ class LiveViewPageController extends GetxController {
   // RxString imageUrl = "http://desprokel10.ddns.net:1234/latestdetect?a=${number.value}".obs;
   var isLoadingWeather = true.obs;
   var isLoadingLatest = true.obs;
-
+  void showModal(BuildContext context, Widget modalContent) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return modalContent;
+      },
+    );
+  }
   // var isLoadingImage = true.obs;
 
   Weather weatherData = Weather();

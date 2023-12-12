@@ -8,9 +8,14 @@ class AboutPage extends StatefulWidget {
 class _AboutPageListState extends State<AboutPage> {
 
   final List<Item> _items = <Item>[
-    Item('Apa itu Bikun Tracker?', 'Bikun Tracker adalah '),
-    Item('Bagaimana Cara Memakai Bikun Tracker?', 'Bikun Tracker adalah '),
-    Item('Tim di Balik Aplikasi', 'Bikun Tracker adalah '),
+    Item('Apa itu HalteTracker?', ''
+        'HalteTracker Merupakan sebuah aplikasi yang membantu setiap pengguna halte di halte teknik untuk mengetahui keramaian di halte. Sehingga pengguna dapat dengan nyaman menggunakan fasiltas halte tanpa menunggu terlalu lama'),
+    Item('Bagaimana Cara HalteTracker?', 'HalteTracker dapat digunakan dengan cara menggunakan aplikasi dan dapt dilihat data secara realtime pada aplikasi '),
+    Item('Tim di Balik Aplikasi', ''
+        'Evan Susanto - 2006466164 \n'
+        'Rizky Rivaldi - 2006466164 \n '
+        'Iqbal Risya - 2006466164 \n '
+        'Raden Dzakiha - 2006466164 \n  '),
   ];
 
   @override

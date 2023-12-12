@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_halte/screens/live_view/live_view_page_controller.dart';
+import 'package:flutter_halte/widgets/DataModal.dart';
 import 'package:flutter_halte/widgets/GalleryCard.dart';
 
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
@@ -144,9 +145,20 @@ class _LiveViewPageState extends State<LiveViewPage> {
                               fontSize: 20,
                               fontWeight: FontWeight.bold)),
                       Spacer(),
-                      ElevatedButton(onPressed: refresh,
-                          child: Icon(FontAwesomeIcons.circleInfo,
-                            color: Configs.primaryColor,))
+                      ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            padding: EdgeInsets.all(0),
+                            // Set the background color
+                            shape: CircleBorder(), // Make the button circular
+                          ),
+                          onPressed: () {
+                            liveViewPageController.showModal(context,
+                                DataModal(data: liveViewPageController.dataNow));
+                          },
+                          child: Icon(
+                            FontAwesomeIcons.circleInfo,
+                            color: Configs.primaryColor,
+                          ))
                       // Text("View All",
                       //     style: TextStyle(
                       //       color: Colors.grey,

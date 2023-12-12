@@ -29,7 +29,9 @@ class TerminalChart extends StatelessWidget {
         minX: 0,
         maxX: data["1hrs"]["length"] - 1.0,
         minY: 0,
-        maxY: data["1hrs"]["count"].reduce((a, b) => a > b ? a : b).toDouble() + 2.0,
+        // maxY: data["1hrs"]["count"].reduce((a, b) => a > b ? a : b).toDouble() + 3.0,
+
+        maxY: 30,
         lineBarsData: [
           LineChartBarData(
             spots: List.generate(data["1hrs"]["length"], (index) {

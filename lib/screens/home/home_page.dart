@@ -10,12 +10,15 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:get/get.dart';
 import 'dart:async';
 
-class HomePage extends StatelessWidget {
+class HomePage extends StatefulWidget {
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
   final HomePageController homePageController = Get.put(HomePageController());
 
   // const HomePage({Key? key}) : super(key: key);
-  // final HomePageController pokemonController = Get.put(HomePageController());
-
   void onInit() {
     // Get.find<HomePageController>().fetchData();
     // print(homePageController.fetchData());
@@ -23,23 +26,26 @@ class HomePage extends StatelessWidget {
   }
 
   Future<void> _refresh() async {
-    homePageController.fetchDataLatest();
-    homePageController.fetchDataWeather();
-    print(homePageController.dataNow.personCount);
+    setState(() {
+      homePageController.fetchDataLatest();
+      homePageController.fetchDataWeather();
+    });
   }
-  // Timer.periodic(Duration(minutes: 5), (Timer timer) {
-  // refresh();
-  //
-  // print("Refreshed In 5 minute");
-  // });
+
+  @override
+  void initState() {
+    Timer.periodic(Duration(minutes: 5), (Timer timer) {
+      _refresh();
+      print("Refreshed In 5 minute");
+    });
+
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
-    Timer.periodic(Duration(minutes: 5), (Timer timer) {
-      _refresh();
 
-      print("Refreshed In 5 minute");
-    });
     return RefreshIndicator(
       color: Configs.primaryColor,
       onRefresh: _refresh,

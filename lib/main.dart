@@ -13,7 +13,6 @@ import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/get_rx/src/rx_types/rx_types.dart';
 import 'package:get/get_state_manager/src/simple/get_controllers.dart';
-import 'package:lottie/lottie.dart';
 
 Future<void> main() async {
   // WidgetsFlutterBinding.ensureInitialized();
@@ -70,7 +69,7 @@ class _MyAppState extends State<MyApp> {
                 child: Container(
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: _icons.asMap().entries.map((entry) {
+                     children: _icons.asMap().entries.map((entry) {
                       final index = entry.key;
                       final icon = entry.value;
 

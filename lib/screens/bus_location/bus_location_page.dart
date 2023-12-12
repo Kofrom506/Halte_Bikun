@@ -21,7 +21,7 @@ class BusLocationPage extends StatelessWidget {
             ],
           ),
           Divider(),
-          CircularTextWidget(number: 6),
+          CircularTextWidget(number: 4),
           Row(
             children: [
               Expanded(
@@ -87,9 +87,9 @@ class CircularTextWidget extends StatelessWidget {
         if (!isNumberGreaterThan5)
           Image.asset("assets/sepi.jpg", width: 200),
         SizedBox(height: 10),
-        Text("RAMAI", style: TextStyle(
+        Text(!isNumberGreaterThan5 ? "Halte Sepi" : "Halte Ramai", style: TextStyle(
             fontSize: 20.0,
-            fontWeight: FontWeight.bold,
+            fontWeight: FontWeight.w300,
             color: isNumberGreaterThan5 ? Colors.red : Colors.black,
           ),
         ),

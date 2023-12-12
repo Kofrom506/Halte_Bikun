@@ -40,7 +40,6 @@ class _ChartPageState extends State<ChartPage> {
     String jsonData = jsonEncode(chartPageController.history?.oneHour);
     chartData = HistoryData.fromJson(chartPageController.historyData1hour);
 
-
     print(chartPageController.historyData1hour);
   }
 
@@ -62,7 +61,6 @@ class _ChartPageState extends State<ChartPage> {
       refresh();
       print("Refreshed In 5 minute");
     });
-
 
     // return SafeArea(
     //   child: Center(
@@ -114,22 +112,25 @@ class _ChartPageState extends State<ChartPage> {
               //   print(chartPageController.historyData1hour)
               // }),
 
-
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-
                   Text("Chart View",
                       style: TextStyle(
                           color: Colors.black,
                           fontSize: 25,
                           fontWeight: FontWeight.bold)),
-                  ElevatedButton(onPressed: refresh,
-                      child: Icon(FontAwesomeIcons.arrowsRotate,
-                        color: Configs.primaryColor,))
+                  ElevatedButton(
+                      onPressed: refresh,
+                      child: Icon(
+                        FontAwesomeIcons.arrowsRotate,
+                        color: Configs.primaryColor,
+                      ))
                 ],
               ),
-              SizedBox(height: 15,),
+              SizedBox(
+                height: 15,
+              ),
               // BarChart(
               //   BarChartData(
               //     alignment: BarChartAlignment.spaceAround,
@@ -165,23 +166,68 @@ class _ChartPageState extends State<ChartPage> {
               // ),
 
 
-              Text("Grafik Keramaian: 7 Hari Terakhir",
+              Obx(() {
 
-                  style: TextStyle(
-                    color: Colors.black,
-                    fontSize: 20,)),
-              SizedBox(height: 15,),
+                if (!chartPageController.isLoadingLatest.value) {
+                  return Text("Grafik Keramaian: ${chartPageController
+                      .typeData} Terakhir",
+                      style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                      ));
+                }else{
+                  return Text("Loading");
+                }
+              }),
+              SizedBox(
+                height: 15,
+              ),
               Obx(() {
                 if (!chartPageController.isLoadingLatest.value) {
+                  int number = 2;
+
+                  dynamic data = chartPageController.historyData1hour;
+
+                  switch (chartPageController.typeData) {
+                    case "1hrs":
+                      data = chartPageController.historyData1hour;
+                      break;
+                    case "3hrs":
+                      data = chartPageController.historyData3hour;
+                      break;
+                    case "6hrs":
+                      data = chartPageController.historyData6hour;
+                      break;
+                    case "12hrs":
+                      data = chartPageController.historyData12hour;
+                      break;
+                    case "1day":
+                      data = chartPageController.historyData1day;
+                      break;
+
+                    case "3day":
+                      data = chartPageController.historyData3day;
+                      break;
+                    case "7day":
+                      data = chartPageController.historyData7day;
+                      break;
+
+                    default:
+                      data = chartPageController.historyData1hour;
+                      break;
+                  }
+
                   return Stack(
                     children: <Widget>[
                       AspectRatio(
                         aspectRatio: 1.70,
                         child: LineChart(
-                          showAvg ? avgData() : mainData(HistoryData.fromJson(chartPageController.historyData1hour)),
+                          showAvg
+                              ? avgData()
+                              : mainData(HistoryData.fromJson(data)),
                         ),
                       ),
-                     SizedBox(
+                      SizedBox(
                         width: 60,
                         height: 34,
                         child: TextButton(
@@ -194,34 +240,51 @@ class _ChartPageState extends State<ChartPage> {
                             'avg',
                             style: TextStyle(
                               fontSize: 12,
-                              color:
-                              showAvg ? Colors.white.withOpacity(0.5) : Colors
-                                  .white,
+                              color: showAvg
+                                  ? Colors.white.withOpacity(0.5)
+                                  : Colors.white,
                             ),
                           ),
                         ),
                       ),
                     ],
                   );
-                }
-                else {
+                } else {
                   return Center(child: CircularProgressIndicator());
                 }
               }),
-              SizedBox(height: 15,),
+              SizedBox(
+                height: 15,
+              ),
 
               Center(
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    InkWell(onTap: () => print("aa"),
-                        child: Chip(label: Text("1 Hour"),)),
-                    InkWell(onTap: () => print("aa"),
-                        child: Chip(label: Text("3 Hour"),)),
-                    InkWell(onTap: () => print("aa"),
-                        child: Chip(label: Text("6 Hour"),)),
-                    InkWell(onTap: () => print("aa"),
-                        child: Chip(label: Text("12 Hour"),)),
+                    InkWell(
+                        onTap: () =>
+                        {chartPageController.typeData = "1hrs", refresh()},
+                        child: Chip(
+                          label: Text("1 Hour"),
+                        )),
+                    InkWell(
+                        onTap: () =>
+                        {chartPageController.typeData = "3hrs", refresh()},
+                        child: Chip(
+                          label: Text("3 Hour"),
+                        )),
+                    InkWell(
+                        onTap: () =>
+                        {chartPageController.typeData = "6hrs", refresh()},
+                        child: Chip(
+                          label: Text("6 Hour"),
+                        )),
+                    InkWell(
+                        onTap: () =>
+                        {chartPageController.typeData = "12hrs", refresh()},
+                        child: Chip(
+                          label: Text("12 Hour"),
+                        )),
 
                     // ElevatedButton(onPressed: refresh,
                     //     child: Text("1 Hrs",style: TextStyle(
@@ -261,16 +324,27 @@ class _ChartPageState extends State<ChartPage> {
                 height: 20,
               ),
               Center(
-                child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    InkWell(onTap: (
-
-                        ) => print("aa"),
-                        child: Chip(label: Text("1 Day"),)),
-                    InkWell(onTap: () => print("aa"),
-                        child: Chip(label: Text("3 Day"),)),
-                    InkWell(onTap: () => print("aa"),
-                        child: Chip(label: Text("7 Day"),)),
+                    InkWell(
+                        onTap: () =>
+                        {chartPageController.typeData = "1day", refresh()},
+                        child: Chip(
+                          label: Text("1 Day"),
+                        )),
+                    InkWell(
+                        onTap: () =>
+                        {chartPageController.typeData = "3day", refresh()},
+                        child: Chip(
+                          label: Text("3 Day"),
+                        )),
+                    InkWell(
+                        onTap: () =>
+                        {chartPageController.typeData = "7day", refresh()},
+                        child: Chip(
+                          label: Text("7 Day"),
+                        )),
                     //
                     // ElevatedButton(onPressed: refresh,
                     //   child: Text("1 Day",style: TextStyle(
@@ -296,7 +370,6 @@ class _ChartPageState extends State<ChartPage> {
                   ],
                 ),
               ),
-
             ],
           ),
         ),
@@ -317,9 +390,9 @@ class _ChartPageState extends State<ChartPage> {
       case 0:
         text = const Text('0 Menit', style: style);
         break;
-      // case 28:
-      //   text = const Text('12 Jam', style: style);
-      //   break;
+    // case 28:
+    //   text = const Text('12 Jam', style: style);
+    //   break;
       default:
         text = const Text('', style: style);
         break;
@@ -410,12 +483,11 @@ class _ChartPageState extends State<ChartPage> {
       maxY: 20,
       lineBarsData: [
         LineChartBarData(
-
           spots: List.generate(
             chartData.time.length,
                 (index) =>
-                FlSpot(index.toDouble(),
-                    double.tryParse(chartData.count[index])!),
+                FlSpot(
+                    index.toDouble(), double.tryParse(chartData.count[index])!),
           ),
           isCurved: true,
           gradient: LinearGradient(
@@ -536,7 +608,6 @@ class _ChartPageState extends State<ChartPage> {
     );
   }
 }
-
 
 class CapsuleButton extends StatelessWidget {
   final String buttonText;
